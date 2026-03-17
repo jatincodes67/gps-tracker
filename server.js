@@ -7,9 +7,14 @@ let currentLocation = {
   lon: 72.0
 };
 
+// 🔥 DEBUG START
+console.log("✅ UPDATED SERVER RUNNING");
+
 // 📥 Receive GPS data from ESP32
 app.get("/update", (req, res) => {
   const { lat, lon } = req.query;
+
+  console.log("📥 Incoming request:", req.query);
 
   if (lat && lon) {
     currentLocation = {
@@ -17,22 +22,29 @@ app.get("/update", (req, res) => {
       lon: parseFloat(lon)
     };
 
-    console.log("📍 New Location:", currentLocation);
+    console.log("📍 Updated Location:", currentLocation);
+    res.send("OK");
   } else {
     console.log("❌ Invalid data received");
+    res.status(400).send("Invalid Data");
   }
-
-  res.send("OK");
 });
 
 // 📡 Send location to frontend (map)
 app.get("/location", (req, res) => {
+  console.log("📡 Sending location:", currentLocation);
   res.json(currentLocation);
+});
+
+// 🧪 TEST ROUTE (IMPORTANT)
+app.get("/test", (req, res) => {
+  res.send("Server is working ✅");
 });
 
 // 🌍 MAP UI
 app.get("/", (req, res) => {
-  console.log("🔥 HIT UPDATE API");
+  console.log("🌍 Map page opened");
+
   res.send(`
   <!DOCTYPE html>
   <html>
@@ -67,16 +79,18 @@ app.get("/", (req, res) => {
           const res = await fetch('/location');
           const data = await res.json();
 
+          console.log("📡 Data from server:", data);
+
           const lat = parseFloat(data.lat);
           const lon = parseFloat(data.lon);
 
           if (!isNaN(lat) && !isNaN(lon)) {
             marker.setLatLng([lat, lon]);
-            map.setView([lat, lon]);
+            map.setView([lat, lon], 17);
           }
 
         } catch (err) {
-          console.log("Error fetching location", err);
+          console.log("❌ Error fetching location", err);
         }
       }
 
