@@ -32,6 +32,7 @@ app.get("/location", (req, res) => {
 
 // 🌍 MAP UI
 app.get("/", (req, res) => {
+  console.log("🔥 HIT UPDATE API");
   res.send(`
   <!DOCTYPE html>
   <html>
