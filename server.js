@@ -1,3 +1,4 @@
+console.log("🔥 NEW VERSION RUNNING");
 const express = require("express");
 const app = express();
 
